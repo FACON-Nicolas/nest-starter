@@ -23,6 +23,16 @@ export class AuthService {
   async signIn(
     userDto: CreateLoginDto,
   ): Promise<{ token: string; user: User }> {
+    if (!userDto.email) {
+      throw new BadRequestException({ error: 'Veuillez saisir un e-mail' });
+    }
+
+    if (!userDto.password) {
+      throw new BadRequestException({
+        error: 'Veuillez saisir un mot de passe',
+      });
+    }
+
     const user: User = await this.userService.findOneByEmail(userDto.email);
 
     if (!user) {
@@ -51,7 +61,7 @@ export class AuthService {
       });
     }
 
-    if (!validator.isEmail(userDto.email)) {
+    if (!validator.isEmail(userDto.email || '')) {
       throw new BadRequestException({
         error: 'Veuillez saisir un e-mail valide',
       });
