@@ -11,6 +11,9 @@ services:
     secrets:
       - source: db_credentials
         target: db_credentials
+    volumes:
+      - .:/app
+      - /app/node_modules
     deploy:
       replicas: 1
 
@@ -26,6 +29,18 @@ services:
       placement:
         constraints:
           - node.role == manager
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    env_file: .env.db
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin
+    secrets:
+      - db_credentials
+    restart: always
+    ports:
+      - "5050:80"
 
 secrets:
   db_credentials:
